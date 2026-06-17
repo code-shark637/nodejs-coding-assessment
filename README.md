@@ -4,9 +4,11 @@
 
 ```
 src/
-  findKthLargest.js    - Kth largest element finder (Quickselect)
+  findKthLargest.js      - Kth largest element finder (Quickselect)
+  LRUCache.js            - LRU Cache with TTL expiration
 tests/
-  findKthLargest.test.js - Unit tests using assert module
+  findKthLargest.test.js - Unit tests for Task 1
+  LRUCache.test.js       - Unit tests for Task 2
 ```
 
 ## Requirements
@@ -18,6 +20,7 @@ tests/
 
 ```bash
 node tests/findKthLargest.test.js
+node tests/LRUCache.test.js
 ```
 
 ## Task 1: Kth Largest Element Finder
@@ -46,3 +49,32 @@ console.log(findKthLargest([3, 2, 3, 1, 2, 4, 5, 5, 6], 4)); // 4
 - All duplicate elements
 - Negative numbers
 - Original array is not mutated
+
+## Task 2: LRU Cache with Expiration
+
+LRU Cache implementation using a **doubly linked list + hash map** for O(1) get/put operations, with optional per-entry TTL expiration.
+
+- **get/put time complexity:** O(1) average
+- **Space complexity:** O(capacity)
+
+### Usage
+
+```js
+const { LRUCache } = require('./src/LRUCache');
+
+const cache = new LRUCache(2);
+cache.put(1, 1);           // No TTL
+cache.put(2, 2, 1000);     // Expires after 1 second
+console.log(cache.get(1)); // 1
+console.log(cache.get(2)); // 2 (if not expired)
+cache.put(3, 3);           // Evicts key 2 (LRU)
+console.log(cache.get(2)); // -1 (evicted)
+```
+
+### Edge Cases Handled
+
+- Invalid capacity (zero, negative, non-integer) → throws Error
+- Negative or zero TTL → throws Error
+- Expired entries removed on next access
+- Updating existing key refreshes recency
+- Key not found returns -1
